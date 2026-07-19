@@ -1,0 +1,8 @@
+@echo off
+REM Copy to CATALINA_BASE\bin\setenv.bat and edit locally.
+set "DMS_DEMO_MODE=false"
+set "DMS_DB_URL=jdbc:oracle:thin:@//192.168.1.20:1521/XEPDB1"
+set "DMS_DB_USERNAME=DOC_ROUTE"
+set "DMS_DB_PASSWORD=CHANGE_ME"
+set "DMS_STORAGE_ROOT=C:\LJTRouteFlowStorage"
+set "DMS_MAX_FILE_MB=20"

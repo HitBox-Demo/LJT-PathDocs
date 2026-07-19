@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "LJT RouteFlow: Check Tools",
+      "type": "shell",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/check-tools.ps1",
+      "problemMatcher": []
+    },
+    {
+      "label": "LJT RouteFlow: Maven Package",
+      "type": "shell",
+      "command": "mvn clean package",
+      "group": {"kind": "build", "isDefault": true},
+      "problemMatcher": ["$javac"]
+    },
+    {
+      "label": "LJT RouteFlow: Deploy Tomcat",
+      "type": "shell",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/deploy-tomcat.ps1",
+      "dependsOn": "LJT RouteFlow: Maven Package",
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0297f1">
+  <title>LJT RouteFlow - Offline</title>
+  <style>
+    :root{--blue:#0297f1;--green:#adcd20;--yellow:#fdf11f;--white:#fdfdfd;--black:#060004}
+    *{box-sizing:border-box}
+    body{font-family:Segoe UI,Arial,sans-serif;margin:0;min-height:100vh;display:grid;place-items:center;background:var(--white);color:var(--black);padding:20px}
+    .box{width:min(520px,100%);background:var(--white);border:1px solid rgba(6,0,4,.1);border-radius:20px;padding:32px;box-shadow:0 20px 50px rgba(2,151,241,.12);position:relative;overflow:hidden}
+    .box::before{content:"";position:absolute;inset:0 0 auto;height:7px;background:linear-gradient(90deg,var(--blue) 0 55%,var(--green) 55% 80%,var(--yellow) 80%)}
+    h1{margin:0 0 12px;font-size:1.8rem}
+    p{line-height:1.6;color:rgba(6,0,4,.66)}
+    button{border:0;background:var(--blue);color:var(--white);border-radius:10px;padding:12px 18px;font-weight:750;cursor:pointer}
+  </style>
+</head>
+<body>
+  <main class="box">
+    <h1>You are offline</h1>
+    <p>The app shell is available, but login, approval, routing and document downloads require a live connection.</p>
+    <button type="button" onclick="location.reload()">Try Again</button>
+  </main>
+</body>
+</html>

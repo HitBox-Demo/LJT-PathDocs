@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "vscjava.vscode-java-pack",
+    "vscjava.vscode-maven",
+    "adashen.vscode-tomcat",
+    "mtxr.sqltools",
+    "hurly.sqltools-oracle-driver"
+  ]
+}

@@ -1,0 +1,9 @@
+# Copy this file to set-local-env.ps1 and edit the local copy.
+# The real file is ignored by Git.
+
+$env:DMS_DEMO_MODE = "false"
+$env:DMS_DB_URL = "jdbc:oracle:thin:@//192.168.1.20:1521/XEPDB1"
+$env:DMS_DB_USERNAME = "DOC_ROUTE"
+$env:DMS_DB_PASSWORD = "CHANGE_ME"
+$env:DMS_STORAGE_ROOT = "C:\LJTRouteFlowStorage"
+$env:DMS_MAX_FILE_MB = "20"

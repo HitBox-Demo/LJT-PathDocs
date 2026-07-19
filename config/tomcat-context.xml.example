@@ -1,0 +1,17 @@
+<Context>
+  <!-- Place as CATALINA_BASE/conf/Catalina/localhost/LJTRouteFlow.xml and edit values. -->
+  <Resource name="jdbc/DocumentManagementDB"
+            auth="Container"
+            type="javax.sql.DataSource"
+            factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+            driverClassName="oracle.jdbc.OracleDriver"
+            url="jdbc:oracle:thin:@//192.168.1.20:1521/XEPDB1"
+            username="DOC_ROUTE"
+            password="CHANGE_ME"
+            maxActive="30"
+            maxIdle="10"
+            minIdle="2"
+            maxWait="10000"
+            validationQuery="SELECT 1 FROM dual"
+            testOnBorrow="true" />
+</Context>

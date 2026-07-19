@@ -1,0 +1,2 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Access Denied</title><link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css"></head><body class="error-body"><main class="error-card"><span>403</span><h1>Access Denied</h1><p>Your account does not have permission to open this page.</p><a class="btn btn-primary" href="${pageContext.request.contextPath}/app/dashboard">Return to Dashboard</a></main></body></html>

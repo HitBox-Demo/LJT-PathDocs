@@ -1,0 +1,14 @@
+/target/
+/.idea/
+*.iml
+*.log
+*.tmp
+.DS_Store
+
+# Local secrets and deployment settings
+src/main/resources/database.properties
+scripts/set-local-env.ps1
+scripts/set-local-env.bat
+
+# Uploaded document storage
+/storage/
