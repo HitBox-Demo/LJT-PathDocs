@@ -1,4 +1,4 @@
-const CACHE_NAME = "ljtrouteflow-static-v4";
+const CACHE_NAME = "ljtrouteflow-static-v13";
 const SCOPE = self.registration.scope;
 const STATIC_ASSETS = [
   "assets/css/app.css",

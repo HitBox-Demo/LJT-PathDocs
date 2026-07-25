@@ -8,10 +8,11 @@ powershell -ExecutionPolicy Bypass -File scripts/check-tools.ps1
 
 Required: Java 21, Maven, Git and Apache Tomcat 9.
 
-## 2. Demo mode
+## 2. Verify and run demo mode
 
 ```powershell
 $env:CATALINA_HOME = "C:\apache-tomcat-9.0.XX"
+powershell -ExecutionPolicy Bypass -File scripts/verify-project.ps1
 powershell -ExecutionPolicy Bypass -File scripts/run-demo.ps1
 & "$env:CATALINA_HOME\bin\startup.bat"
 ```

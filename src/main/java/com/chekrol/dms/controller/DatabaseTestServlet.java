@@ -1,13 +1,52 @@
 package com.chekrol.dms.controller;
 
-import com.chekrol.dms.util.*;
+import com.chekrol.dms.util.AppConfig;
+import com.chekrol.dms.util.DatabaseConnection;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 @WebServlet("/setup/database-test")
 public class DatabaseTestServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest req,HttpServletResponse resp)throws ServletException,IOException{req.setAttribute("pageTitle","Database Test");req.setAttribute("demoMode",AppConfig.isDemoMode());req.setAttribute("configSource",DatabaseConnection.configurationSource());if(!AppConfig.isDemoMode()){try(Connection c=DatabaseConnection.getConnection();PreparedStatement ps=c.prepareStatement("SELECT SYS_CONTEXT('USERENV','DB_NAME'),SYS_CONTEXT('USERENV','SERVICE_NAME'),SYS_CONTEXT('USERENV','SERVER_HOST'),USER FROM dual");ResultSet rs=ps.executeQuery()){if(rs.next()){req.setAttribute("dbName",rs.getString(1));req.setAttribute("serviceName",rs.getString(2));req.setAttribute("serverHost",rs.getString(3));req.setAttribute("dbUser",rs.getString(4));req.setAttribute("databaseOk",true);}}catch(Exception ex){req.setAttribute("databaseError",ex.getMessage());}}req.getRequestDispatcher("/WEB-INF/views/setup/database-test.jsp").forward(req,resp);}
+    private static final String DATABASE_INFO_SQL = """
+            SELECT SYS_CONTEXT('USERENV','DB_NAME'),
+                   SYS_CONTEXT('USERENV','SERVICE_NAME'),
+                   SYS_CONTEXT('USERENV','SERVER_HOST'),
+                   USER
+            FROM dual
+            """;
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.setAttribute("pageTitle", "Database Test");
+        request.setAttribute("demoMode", AppConfig.isDemoMode());
+        request.setAttribute("configSource", DatabaseConnection.configurationSource());
+
+        if (!AppConfig.isDemoMode()) {
+            try (Connection connection = DatabaseConnection.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(DATABASE_INFO_SQL);
+                 ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    request.setAttribute("dbName", resultSet.getString(1));
+                    request.setAttribute("serviceName", resultSet.getString(2));
+                    request.setAttribute("serverHost", resultSet.getString(3));
+                    request.setAttribute("dbUser", resultSet.getString(4));
+                    request.setAttribute("databaseOk", true);
+                }
+            } catch (Exception exception) {
+                request.setAttribute("databaseError", exception.getMessage());
+            }
+        }
+
+        request.getRequestDispatcher("/WEB-INF/views/setup/database-test.jsp")
+                .forward(request, response);
+    }
 }

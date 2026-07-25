@@ -20,10 +20,10 @@
             <div class="file-list">
                 <c:forEach items="${files}" var="file">
                     <a href="${ctx}/documents/download?fileId=${file.id}">
-                        <span aria-hidden="true">□</span>
+                        <span aria-hidden="true">PDF</span>
                         <div>
                             <strong><c:out value="${file.originalName}"/></strong>
-                            <small><c:out value="${file.mimeType}"/> · ${file.fileSize} bytes</small>
+                            <small><c:out value="${file.mimeType}"/> ${file.fileSize} bytes</small>
                         </div>
                         <b>Download</b>
                     </a>
@@ -63,8 +63,6 @@
             <dt>Priority</dt>
             <dd><c:out value="${document.priority}"/></dd>
 
-            <%-- <dt>Confidential</dt>
-            <dd>${document.confidential ? 'Yes' : 'No'}</dd> --%>
 
             <dt>Destination</dt>
             <dd>
@@ -92,6 +90,15 @@
             <dt>Due Date</dt>
             <dd><c:out value="${document.dueDate}"/></dd>
         </dl>
+
+        <c:if test="${document.createdById == currentUser.id && (document.status == 'RETURNED_FOR_CORRECTION' || document.status == 'DRAFT' || document.status == 'RECALLED')}">
+            <a class="btn btn-secondary btn-block" href="${ctx}/documents/edit?id=${document.id}">
+                <c:choose>
+                    <c:when test="${document.status == 'RETURNED_FOR_CORRECTION'}">Correct Document</c:when>
+                    <c:otherwise>Edit Document</c:otherwise>
+                </c:choose>
+            </a>
+        </c:if>
 
         <c:if test="${document.status == 'PENDING_APPROVAL' && document.createdById == currentUser.id}">
             <form method="post" action="${ctx}/documents/action" data-confirm="Recall this document and stop the current approval request?">

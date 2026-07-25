@@ -1,45 +1,138 @@
-<div class="sidebar-backdrop" data-sidebar-backdrop hidden></div>
+<div class="sidebar-backdrop"
+     data-sidebar-backdrop
+     hidden>
+</div>
+
 <aside class="sidebar" data-sidebar>
     <div class="brand">
         <span class="brand-mark">LJT</span>
-        <div><strong>LJT RouteFlow</strong><small>Document Routing System</small></div>
-        <%-- <button class="icon-btn sidebar-close" type="button" data-close-sidebar aria-label="Close navigation">×</button> --%>
+
+        <div>
+            <strong>LJT RouteFlow</strong>
+            <small>Document Routing System</small>
+        </div>
+
+        <button
+            class="icon-btn sidebar-close"
+            type="button"
+            data-close-sidebar
+            aria-label="Close navigation"
+        >
+            &times;
+        </button>
     </div>
 
     <div class="user-card">
-        <strong><c:out value="${currentUser.fullName}"/></strong>
-        <small><c:out value="${currentUser.primaryRole}"/><c:if test="${not empty currentUser.departmentName}"> ·
-         <c:out value="${currentUser.departmentName}"/></c:if></small>
+        <strong>
+            <c:out value="${currentUser.fullName}"/>
+        </strong>
+
+        <small>
+            <c:out value="${currentUser.primaryRole}"/>
+
+            <c:if test="${not empty currentUser.departmentName}">
+                - <c:out value="${currentUser.departmentName}"/>
+            </c:if>
+        </small>
     </div>
 
     <nav class="nav-list" aria-label="Main navigation">
-        <a href="${ctx}/app/dashboard"><span class="nav-icon" aria-hidden="true">1.</span><span>Dashboard</span></a>
+        <a href="${ctx}/app/dashboard">
+            <span class="nav-icon" aria-hidden="true">1.</span>
+            <span>Dashboard</span>
+        </a>
 
-        <c:if test="${currentUser.hasRole('CLERK') || currentUser.hasRole('SYSTEM_ADMIN')}">
-            <a href="${ctx}/documents/create"><span class="nav-icon" aria-hidden="true">2.</span><span>Create Document</span></a>
-            <a href="${ctx}/documents/list?view=draft"><span class="nav-icon" aria-hidden="true">3.</span><span>Draft Documents</span></a>
-            <a href="${ctx}/documents/list?view=pending"><span class="nav-icon" aria-hidden="true">4.</span><span>Pending Documents</span></a>
-            <a href="${ctx}/documents/list?view=returned"><span class="nav-icon" aria-hidden="true">5.</span><span>Returned Documents</span></a>
-            <a href="${ctx}/documents/list?view=repository"><span class="nav-icon" aria-hidden="true">7.</span><span>Repository</span></a>
-            <a href="${ctx}/admin/users"><span class="nav-icon" aria-hidden="true">8.</span><span>User Management</span></a>
-            <a href="${ctx}/admin/role-requests"><span class="nav-icon" aria-hidden="true">9.</span><span>Role Requests</span></a>
-            <a href="${ctx}/setup/database-test"><span class="nav-icon" aria-hidden="true">10.</span><span>Database Test</span></a>
+        <%--
+            Use permission flags supplied by AuthenticationFilter.
+            Do not call hasRole(...) directly from JSP EL.
+        --%>
+        <c:if test="${canManageDocuments}">
+            <a href="${ctx}/documents/create">
+                <span class="nav-icon" aria-hidden="true">2.</span>
+                <span>Create Document</span>
+            </a>
+
+            <a href="${ctx}/documents/list?view=draft">
+                <span class="nav-icon" aria-hidden="true">3.</span>
+                <span>Draft Documents</span>
+            </a>
+
+            <a href="${ctx}/documents/list?view=pending">
+                <span class="nav-icon" aria-hidden="true">4.</span>
+                <span>Pending Documents</span>
+            </a>
+
+            <a href="${ctx}/documents/list?view=returned">
+                <span class="nav-icon" aria-hidden="true">5.</span>
+                <span>Returned Documents</span>
+            </a>
+
+            <a href="${ctx}/documents/list?view=repository">
+                <span class="nav-icon" aria-hidden="true">6.</span>
+                <span>Repository</span>
+            </a>
         </c:if>
 
-        <c:if test="${currentUser.hasRole('BOSS')}">
-            <a href="${ctx}/approvals/list"><span class="nav-icon" aria-hidden="true">1.</span><span>Pending Approvals</span></a>
-            <a href="${ctx}/approvals/list?view=history"><span class="nav-icon" aria-hidden="true">2.</span><span>Approval History</span></a>
-            <a href="${ctx}/approvals/role-requests"><span class="nav-icon" aria-hidden="true">3.</span><span>Role Approval</span></a>
-            <a href="${ctx}/documents/list?view=repository"><span class="nav-icon" aria-hidden="true">4.</span><span>Repository</span></a>
+        <c:if test="${canManageUsers}">
+            <a href="${ctx}/admin/users">
+                <span class="nav-icon" aria-hidden="true">7.</span>
+                <span>User Management</span>
+            </a>
+
+            <a href="${ctx}/admin/role-requests">
+                <span class="nav-icon" aria-hidden="true">8.</span>
+                <span>Role Requests</span>
+            </a>
+
+            <a href="${ctx}/setup/database-test">
+                <span class="nav-icon" aria-hidden="true">9.</span>
+                <span>Database Test</span>
+            </a>
         </c:if>
 
-        <c:if test="${currentUser.hasRole('DEPARTMENT_USER')}">
-            <a href="${ctx}/documents/list?view=department"><span class="nav-icon" aria-hidden="true">1.</span><span>Department Folder</span></a>
-            <a href="${ctx}/documents/list?view=search"><span class="nav-icon" aria-hidden="true">2.</span><span>Search Documents</span></a>
+        <c:if test="${canApproveDocuments}">
+            <a href="${ctx}/approvals/list">
+                <span class="nav-icon" aria-hidden="true">2.</span>
+                <span>Pending Approvals</span>
+            </a>
+
+            <a href="${ctx}/approvals/list?view=history">
+                <span class="nav-icon" aria-hidden="true">3.</span>
+                <span>Approval History</span>
+            </a>
+
+            <a href="${ctx}/approvals/role-requests">
+                <span class="nav-icon" aria-hidden="true">4.</span>
+                <span>Role Approval</span>
+            </a>
+
+            <c:if test="${not canManageDocuments}">
+                <a href="${ctx}/documents/list?view=repository">
+                    <span class="nav-icon" aria-hidden="true">5.</span>
+                    <span>Repository</span>
+                </a>
+            </c:if>
         </c:if>
 
-        <a href="${ctx}/notifications/list"><span class="nav-icon" aria-hidden="true">:3</span><span>Notifications</span></a>
+        <c:if test="${canViewDepartmentFolder}">
+            <a href="${ctx}/documents/list?view=department">
+                <span class="nav-icon" aria-hidden="true">2.</span>
+                <span>Department Folder</span>
+            </a>
+
+            <a href="${ctx}/documents/list?view=search">
+                <span class="nav-icon" aria-hidden="true">3.</span>
+                <span>Search Documents</span>
+            </a>
+        </c:if>
+
+        <a href="${ctx}/notifications/list">
+            <span class="nav-icon" aria-hidden="true">N.</span>
+            <span>Notifications</span>
+        </a>
     </nav>
 
-    <div class="sidebar-foot"><small>LJT - Java JSP/Servlet PWA · v1.1</small></div>
+    <div class="sidebar-foot">
+        <small>LJT RouteFlow - JSP/Servlet PWA - v1.2</small>
+    </div>
 </aside>

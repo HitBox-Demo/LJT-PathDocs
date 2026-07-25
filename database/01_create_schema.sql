@@ -44,7 +44,7 @@ CREATE TABLE dms_document (
   date_received DATE NOT NULL,
   category VARCHAR2(80) NOT NULL,
   priority VARCHAR2(20) DEFAULT 'NORMAL' NOT NULL CHECK (priority IN ('NORMAL','URGENT')),
-  confidential_flag CHAR(1) DEFAULT 0 NOT NULL ),
+  confidential_flag CHAR(1) DEFAULT 'N' NOT NULL CHECK (confidential_flag IN ('Y','N')),
   description VARCHAR2(2000),
   destination_department_id NUMBER NOT NULL REFERENCES dms_department(department_id),
   boss_id NUMBER NOT NULL REFERENCES dms_user(user_id),

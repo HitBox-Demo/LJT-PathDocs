@@ -5,7 +5,7 @@
         <div class="document-preview"><span>PDF</span><strong>Main Document</strong><small>Open each attachment before making a decision.</small></div>
         <h2>Document Summary</h2><p class="body-copy"><c:out value="${document.description}"/></p>
         <dl class="summary-grid"><dt>Reference</dt><dd><c:out value="${document.referenceNo}"/></dd><dt>Sender</dt><dd><c:out value="${document.sender}"/></dd><dt>Priority</dt><dd><c:out value="${document.priority}"/></dd><dt>Original Destination</dt><dd><c:out value="${document.destinationDepartmentName}"/></dd></dl>
-        <c:if test="${not empty files}"><div class="file-list"><c:forEach items="${files}" var="file"><a href="${ctx}/documents/download?fileId=${file.id}"><span>📎</span><div><strong><c:out value="${file.originalName}"/></strong><small><c:out value="${file.mimeType}"/></small></div><b>Download</b></a></c:forEach></div></c:if>
+        <c:if test="${not empty files}"><div class="file-list"><c:forEach items="${files}" var="file"><a href="${ctx}/documents/download?fileId=${file.id}"><span>FILE</span><div><strong><c:out value="${file.originalName}"/></strong><small><c:out value="${file.mimeType}"/></small></div><b>Download</b></a></c:forEach></div></c:if>
     </section>
     <aside class="card decision-card">
         <h2>Boss Decision</h2>

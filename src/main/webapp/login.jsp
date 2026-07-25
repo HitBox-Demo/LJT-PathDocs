@@ -54,7 +54,7 @@
     <aside class="login-info">
         <div>
             <h2>From hardcopy to the right department</h2>
-            <article><span>1</span><div><strong>Capture and digitise</strong><p>Use the phone camera or upload an existing PDF.</p></div></article>
+            <article><span>1</span><div><strong>Capture and digitise</strong><p>Choose document images from your device or upload an existing PDF.</p></div></article>
             <article><span>2</span><div><strong>Boss approval checkpoint</strong><p>Approve, reject or redirect before routing.</p></div></article>
             <article><span>3</span><div><strong>Department repository</strong><p>IT, Finance and Management see only authorised records.</p></div></article>
         </div>

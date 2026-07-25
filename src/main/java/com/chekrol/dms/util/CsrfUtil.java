@@ -1,27 +1,64 @@
 package com.chekrol.dms.util;
 
 import javax.servlet.http.HttpSession;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
 
 public final class CsrfUtil {
+
     public static final String SESSION_KEY = "csrfToken";
+
     private static final SecureRandom RANDOM = new SecureRandom();
 
-    private CsrfUtil() {}
+    private CsrfUtil() {
+    }
 
     public static String ensureToken(HttpSession session) {
         Object existing = session.getAttribute(SESSION_KEY);
-        if (existing instanceof String && !((String) existing).isBlank()) return (String) existing;
+
+        if (existing instanceof String
+                && !((String) existing).isBlank()) {
+            return (String) existing;
+        }
+
         byte[] bytes = new byte[24];
         RANDOM.nextBytes(bytes);
-        String token = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+
+        String token = Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(bytes);
+
         session.setAttribute(SESSION_KEY, token);
+
         return token;
     }
 
-    public static boolean isValid(HttpSession session, String supplied) {
+    /**
+     * Constant-time comparison avoids leaking token-match information.
+     */
+    public static boolean isValid(
+            HttpSession session,
+            String supplied
+    ) {
         Object expected = session.getAttribute(SESSION_KEY);
-        return expected instanceof String && supplied != null && expected.equals(supplied);
+
+        if (!(expected instanceof String)
+                || supplied == null
+                || supplied.isBlank()) {
+            return false;
+        }
+
+        byte[] expectedBytes = ((String) expected)
+                .getBytes(StandardCharsets.UTF_8);
+
+        byte[] suppliedBytes = supplied
+                .getBytes(StandardCharsets.UTF_8);
+
+        return MessageDigest.isEqual(
+                expectedBytes,
+                suppliedBytes
+        );
     }
 }

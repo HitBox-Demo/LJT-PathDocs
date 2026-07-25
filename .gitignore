@@ -1,14 +1,27 @@
-/target/
-/.idea/
-*.iml
-*.log
-*.tmp
-.DS_Store
+# Maven output
+target/
 
-# Local secrets and deployment settings
-src/main/resources/database.properties
+# IDE files
+.vscode/*.log
+.idea/
+.classpath
+.project
+.settings/
+
+# Local credentials and environment files
+.env
+*.local.properties
 scripts/set-local-env.ps1
-scripts/set-local-env.bat
+src/main/resources/database.properties
 
-# Uploaded document storage
-/storage/
+# Logs and runtime data
+*.log
+logs/
+storage/
+uploads/
+work/
+temp/
+
+# Operating system files
+Thumbs.db
+.DS_Store

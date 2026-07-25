@@ -111,17 +111,10 @@ h2 {
 
 .btn:focus-visible,
 .icon-btn:focus-visible,
-/* Remove mouse-click focus outline */
-.nav-list a:focus:not(:focus-visible) {
-    outline: none;
-    box-shadow: none;
-}
-
-/* Keep an accessible outline for keyboard users */
-.nav-list a:focus-visible {
-    outline: 2px solid var(--gold);
-    outline-offset: 2px;
-    border-radius: 10px;
+a:focus-visible,
+summary:focus-visible {
+  outline: 3px solid rgba(253, 241, 31, 0.76);
+  outline-offset: 2px;
 }
 
 .btn-primary {
@@ -226,7 +219,7 @@ h2 {
   align-items: center;
   justify-content: center;
   padding: clamp(1rem, 4vw, 3.5rem);
-  background: #464531;
+  background: var(--white);
 }
 
 .login-card {
@@ -554,14 +547,9 @@ textarea:focus {
 }
 
 .nav-list a.active {
-    color: #006cae;
-    background: rgba(2, 151, 241, 0.12);
-    font-weight: 700;
-}
-
-.nav-list a.active .nav-icon {
-    color: var(--black);
-    background: var(--green);
+  color: var(--blue-deep);
+  background: var(--blue-soft);
+  font-weight: 800;
 }
 
 .nav-list a.active::before {
@@ -1203,6 +1191,178 @@ td strong {
   font-weight: 900;
 }
 
+
+/* Text overflow and correction form protection */
+.page-heading > div,
+.card,
+.card-header > div,
+.detail-grid > *,
+.detail-card,
+.info-card,
+.form-section,
+.field,
+.upload-box,
+.document-preview,
+.file-list a,
+.file-list a > div,
+.existing-file-row,
+.existing-file-copy,
+.notification > div {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.page-heading h1,
+.page-heading p,
+.card-header h2,
+.card-header p,
+.body-copy,
+.info-card dt,
+.info-card dd,
+.summary-grid dt,
+.summary-grid dd,
+.document-preview strong,
+.document-preview small,
+.doc-link strong,
+.doc-link span,
+table th,
+table td,
+td strong,
+td small,
+.file-list strong,
+.file-list small,
+.existing-file-copy strong,
+.existing-file-copy small,
+.alert,
+.notification p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+input,
+select,
+textarea,
+button,
+.btn {
+  max-width: 100%;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-width: 0;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.doc-link span {
+  white-space: normal;
+}
+
+.file-list a > b {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+img,
+svg,
+video,
+iframe,
+object,
+embed {
+  max-width: 100%;
+}
+
+.correction-banner {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.correction-banner span,
+.correction-banner small {
+  display: block;
+}
+
+.readonly-grid input[readonly] {
+  color: var(--muted);
+  background: var(--surface-muted);
+  cursor: not-allowed;
+}
+
+.existing-files {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0 1rem 1rem;
+}
+
+.existing-file-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding: 0.78rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+}
+
+.existing-file-copy {
+  display: grid;
+  flex: 1;
+  gap: 0.18rem;
+}
+
+.existing-file-copy small {
+  color: var(--muted);
+}
+
+.remove-file-option {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.remove-file-option input {
+  width: auto;
+}
+
+.action-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.edit-actions {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 700px) {
+  .existing-file-row,
+  .action-cell {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .remove-file-option,
+  .action-cell .btn {
+    width: 100%;
+  }
+}
+
 /* Responsive */
 @media (max-width: 1000px) {
   .stats-grid {
@@ -1350,5 +1510,378 @@ td strong {
 
   .brand strong {
     font-size: 0.86rem;
+  }
+}
+
+/* Mobile tables, existing files and multi-image picker */
+.table-card {
+  width: 100%;
+  max-width: 100%;
+}
+
+.table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrap table {
+  width: 100%;
+  min-width: 780px;
+  table-layout: auto;
+}
+
+.table-wrap th,
+.table-wrap td {
+  min-width: max-content;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.table-wrap .wrap-cell,
+.table-wrap .wrap-cell strong,
+.table-wrap .wrap-cell small,
+.table-wrap .doc-link span {
+  min-width: 130px;
+  max-width: 260px;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.document-table {
+  min-width: 930px;
+}
+
+.user-table {
+  min-width: 1080px;
+}
+
+.pending-action-cell {
+  min-width: 205px;
+}
+
+.pending-action-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.pending-copy {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.pending-action-line .btn,
+.table-wrap .btn-small {
+  min-width: 68px;
+  min-height: 36px;
+  padding-right: 0.75rem;
+  padding-left: 0.75rem;
+}
+
+.existing-files {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0 1rem 1rem;
+}
+
+.existing-file-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  gap: 0.85rem;
+  padding: 0.78rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+}
+
+.existing-file-copy {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 0.18rem;
+}
+
+.existing-file-copy strong,
+.existing-file-copy small {
+  overflow-wrap: anywhere;
+}
+
+.existing-file-copy small {
+  color: var(--muted);
+}
+
+.existing-image-row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+}
+
+.existing-image-thumb {
+  display: block;
+  width: 72px;
+  height: 64px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+}
+
+.file-remove-button {
+  display: grid;
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0;
+  place-items: center;
+  color: var(--white);
+  background: rgba(6, 0, 4, 0.78);
+  border: 0;
+  border-radius: 50%;
+  font-size: 0.84rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.file-remove-button:hover {
+  background: var(--danger);
+}
+
+.file-remove-button.is-undo {
+  width: auto;
+  padding: 0 0.65rem;
+  color: var(--black);
+  background: var(--gold);
+  border-radius: 9px;
+}
+
+.existing-file-row.marked-for-removal {
+  opacity: 0.58;
+  background: var(--danger-soft);
+  border-color: rgba(198, 40, 40, 0.28);
+}
+
+.existing-file-row.marked-for-removal .existing-file-copy {
+  text-decoration: line-through;
+}
+
+.image-picker-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: 0.65rem;
+  margin-top: 0.55rem;
+}
+
+.image-picker-button {
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+.image-picker-summary {
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.visually-hidden-file,
+.stored-image-input,
+.image-input-store {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.visually-hidden-file:focus-visible + .image-picker-button {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.selected-image-area {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  gap: 0.7rem;
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+}
+
+.selected-image-area[hidden] {
+  display: none;
+}
+
+.selected-image-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  gap: 0.75rem;
+}
+
+.selected-image-header strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.btn-text-danger {
+  flex: 0 0 auto;
+  padding: 0.35rem 0.5rem;
+  color: #a61b1b;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 750;
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.btn-text-danger:hover {
+  background: rgba(166, 27, 27, 0.08);
+}
+
+.selected-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(135px, 100%), 1fr));
+  width: 100%;
+  min-width: 0;
+  gap: 0.7rem;
+}
+
+.selected-image-item {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.selected-image-thumbnail {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #eef4f8;
+}
+
+.selected-image-remove {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  place-items: center;
+  color: var(--white);
+  font-size: 0.85rem;
+  font-weight: 800;
+  line-height: 1;
+  background: rgba(6, 0, 4, 0.78);
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.selected-image-remove:hover {
+  background: var(--danger);
+}
+
+.selected-image-information {
+  display: grid;
+  min-width: 0;
+  gap: 0.15rem;
+  padding: 0.55rem;
+}
+
+.selected-image-information strong,
+.selected-image-information span,
+.selected-image-information small {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.selected-image-information span {
+  overflow: hidden;
+  font-size: 0.76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selected-image-information small {
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+@media (max-width: 700px) {
+  .content {
+    padding-right: 0.6rem;
+    padding-left: 0.6rem;
+  }
+
+  .table-wrap table {
+    min-width: 760px;
+  }
+
+  .document-table {
+    min-width: 900px;
+  }
+
+  .user-table {
+    min-width: 1050px;
+  }
+
+  .existing-file-row,
+  .existing-image-row {
+    align-items: stretch;
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+  }
+
+  .existing-image-thumb {
+    width: 64px;
+    height: 58px;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-picker-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .image-picker-button {
+    width: 100%;
+  }
+
+  .selected-image-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .selected-image-header {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 330px) {
+  .selected-image-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

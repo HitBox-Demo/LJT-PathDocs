@@ -25,15 +25,14 @@ INSERT INTO dms_user_role SELECT u.user_id,r.role_id,SYSTIMESTAMP FROM dms_user 
 INSERT INTO dms_user_role SELECT u.user_id,r.role_id,SYSTIMESTAMP FROM dms_user u,dms_role r WHERE u.username='boss' AND r.role_code='BOSS';
 INSERT INTO dms_user_role SELECT u.user_id,r.role_id,SYSTIMESTAMP FROM dms_user u,dms_role r WHERE u.username IN('it.user','finance.user','management.user') AND r.role_code='DEPARTMENT_USER';
 INSERT INTO dms_user_role SELECT u.user_id,r.role_id,SYSTIMESTAMP FROM dms_user u,dms_role r WHERE u.username='management.user' AND r.role_code='BOSS';
-INSERT INTO dms_user_role SELECT u.user_id,r.role_id,SYSTIMESTAMP FROM dms_user u,dms_role r WHERE u.username IN('finance.user','management.user') ;
 
 -- Sample metadata records. File paths are intentionally omitted; create/upload real files through the application.
 INSERT INTO dms_document(document_code,title,reference_no,sender,date_received,category,priority,description,destination_department_id,boss_id,status,created_by,submitted_at,due_date)
-SELECT 'DOC-2026-0001','Procurement Request - Server Upgrade','IT/PR/2026/001','Jabatan IT',DATE '2026-07-10','Procurement','URGENT','N','Sample migrated record.',d.department_id,b.user_id,'PENDING_APPROVAL',c.user_id,TIMESTAMP '2026-07-10 10:00:00',DATE '2026-07-12'
+SELECT 'DOC-2026-0001','Procurement Request - Server Upgrade','IT/PR/2026/001','Jabatan IT',DATE '2026-07-10','Procurement','URGENT','Sample migrated record.',d.department_id,b.user_id,'PENDING_APPROVAL',c.user_id,TIMESTAMP '2026-07-10 10:00:00',DATE '2026-07-12'
 FROM dms_department d,dms_user b,dms_user c WHERE d.department_code='IT' AND b.username='boss' AND c.username='clerk';
 
 INSERT INTO dms_document(document_code,title,reference_no,sender,date_received,category,priority,description,destination_department_id,boss_id,status,created_by,submitted_at,due_date,rejection_reason)
-SELECT 'DOC-2026-0002','Office Renovation Quotation','FAC/QU/2026/002','Syarikat Bina Maju',DATE '2026-07-11','Facilities','NORMAL','N','Sample returned record.',d.department_id,b.user_id,'RETURNED_FOR_CORRECTION',c.user_id,TIMESTAMP '2026-07-11 09:00:00',DATE '2026-07-16','Missing page 3 of quotation.'
+SELECT 'DOC-2026-0002','Office Renovation Quotation','FAC/QU/2026/002','Syarikat Bina Maju',DATE '2026-07-11','Facilities','NORMAL','Sample returned record.',d.department_id,b.user_id,'RETURNED_FOR_CORRECTION',c.user_id,TIMESTAMP '2026-07-11 09:00:00',DATE '2026-07-16','Missing page 3 of quotation.'
 FROM dms_department d,dms_user b,dms_user c WHERE d.department_code='MANAGEMENT' AND b.username='management.user' AND c.username='clerk';
 
 COMMIT;

@@ -10,8 +10,4 @@
     <td><c:out value="${r.requestedByName}"/></td><td><c:out value="${r.requestedAt}"/></td>
     <td><span class="badge status-pending-approval"><c:out value="${r.status}"/></span></td></tr>
 </c:forEach><c:if test="${empty requests}"><tr><td colspan="7" class="empty-state">No pending role requests.</td></tr></c:if></tbody></table></div></section>
-<div></div>
-<div class="alert alert-warning">
-    Boss role-request approval is represented in the schema and DAO foundation. 
-    Complete the organisation's exact role-change policy after the Oracle workflow is tested.</div>
 <%@ include file="../common/layout-bottom.jspf" %>

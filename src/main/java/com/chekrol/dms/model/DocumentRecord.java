@@ -13,7 +13,6 @@ public class DocumentRecord implements Serializable {
     private LocalDate dateReceived;
     private String category;
     private String priority;
-    private boolean confidential;
     private String description;
     private Long destinationDepartmentId;
     private String destinationDepartmentName;
@@ -47,8 +46,6 @@ public class DocumentRecord implements Serializable {
     public void setCategory(String category) { this.category = category; }
     public String getPriority() { return priority; }
     public void setPriority(String priority) { this.priority = priority; }
-    public boolean isConfidential() { return confidential; }
-    public void setConfidential(boolean confidential) { this.confidential = confidential; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
     public Long getDestinationDepartmentId() { return destinationDepartmentId; }
