@@ -1,68 +1,62 @@
-# Next Steps — Oracle Integration
+# Oracle activation steps
 
-The code is already split between demo mode and DAO/JDBC mode. Do not redesign the frontend before completing these steps.
+## Completed database setup
 
-## 1. Obtain connection information
+The local database is Oracle XE 21c with:
 
-- Oracle server IP/hostname
-- Listener port, normally `1521`
-- Service name, for example `XEPDB1`
-- Dedicated application-schema username and password
-
-## 2. Test network access
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\test-oracle.ps1 -HostName YOUR_ORACLE_IP -Port 1521
+```text
+Host: localhost
+Port: 1521
+Service: XEPDB1
+Schema: LJT_ROUTE_FLOW
 ```
 
-Continue only when `TcpTestSucceeded` is `True`.
+The schema, seed data, verification and transaction smoke test are complete.
 
-## 3. Create and verify the schema
+## 1. Configure Tomcat environment
 
-Run as the dedicated application schema, not as the web application using `SYS` or `SYSTEM`:
-
-1. `database/01_create_schema.sql`
-2. `database/02_seed_data.sql`
-3. `database/03_verify_schema.sql`
-
-## 4. Configure the application locally
+Use the same terminal that starts Tomcat:
 
 ```powershell
-Copy-Item scripts\set-local-env.ps1.example scripts\set-local-env.ps1
-```
-
-Set values such as:
-
-```powershell
-$env:DMS_DEMO_MODE = "false"
-$env:DMS_DB_URL = "jdbc:oracle:thin:@//192.168.1.20:1521/XEPDB1"
+$env:DMS_DEMO_MODE = "true"
+$env:DMS_DB_URL = "jdbc:oracle:thin:@//localhost:1521/XEPDB1"
 $env:DMS_DB_USERNAME = "LJT_ROUTE_FLOW"
-$env:DMS_DB_PASSWORD = "your-password"
+$env:DMS_DB_PASSWORD = "YOUR_ACTUAL_PASSWORD"
 $env:DMS_STORAGE_ROOT = "C:\LJTRouteFlowStorage"
 ```
 
-Load the file in the same terminal that starts Tomcat.
-
-## 5. Deploy and test
-
-```powershell
-. .\scripts\set-local-env.ps1
-powershell -ExecutionPolicy Bypass -File scripts\deploy-tomcat.ps1
-```
-
-Restart Tomcat and open:
+Restart Tomcat, then open:
 
 ```text
 http://localhost:8082/LJTRouteFlow/setup/database-test
 ```
 
-Then perform the complete manual acceptance checklist using newly created Oracle records.
+Version 1.3.0 tests Oracle even while demo mode remains enabled. Expect:
 
-## 6. Production preparation
+```text
+Connected user: LJT_ROUTE_FLOW
+Container: XEPDB1
+RouteFlow tables: 10 / 10
+```
 
-- Change all seed passwords.
-- Use HTTPS and secure session cookies.
-- Confirm the storage directory is writable only by the Tomcat service account.
-- Configure backups and retention.
-- Add malware scanning for uploaded files.
-- Test simultaneous clerk/boss/department sessions.
+## 2. Activate Oracle workflow
+
+Only after the database test passes:
+
+```powershell
+$env:DMS_DEMO_MODE = "false"
+```
+
+Restart Tomcat and log in with the seeded Oracle account:
+
+```text
+clerk / Clerk@123
+```
+
+Then test draft, submit, recall, boss decision and department routing.
+
+## Duplicate protection
+
+Create Document now stores the validated form submission token in
+`DMS_DOCUMENT.SUBMISSION_KEY`. A unique database constraint prevents the same
+request from generating a second document, history row or boss notification.

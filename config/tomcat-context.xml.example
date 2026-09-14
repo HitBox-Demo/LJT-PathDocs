@@ -1,17 +1,21 @@
 <Context>
-  <!-- Place as CATALINA_BASE/conf/Catalina/localhost/LJTRouteFlow.xml and edit values. -->
+  <!-- Optional JNDI alternative. Environment DMS_DB_* settings take priority. -->
+  <!-- Place as CATALINA_BASE/conf/Catalina/localhost/LJTRouteFlow.xml. -->
   <Resource name="jdbc/DocumentManagementDB"
             auth="Container"
             type="javax.sql.DataSource"
             factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
             driverClassName="oracle.jdbc.OracleDriver"
-            url="jdbc:oracle:thin:@//192.168.1.20:1521/XEPDB1"
-            username="DOC_ROUTE"
+            url="jdbc:oracle:thin:@//localhost:1521/XEPDB1"
+            username="LJT_ROUTE_FLOW"
             password="CHANGE_ME"
-            maxActive="30"
+            initialSize="2"
+            maxActive="20"
             maxIdle="10"
             minIdle="2"
             maxWait="10000"
             validationQuery="SELECT 1 FROM dual"
-            testOnBorrow="true" />
+            testOnBorrow="true"
+            testWhileIdle="true"
+            validationInterval="30000" />
 </Context>

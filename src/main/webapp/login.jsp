@@ -20,8 +20,8 @@
                 <span class="brand-mark" aria-hidden="true">LJT</span>
                 <div><strong>LJT RouteFlow</strong><small>Document Management System</small></div>
             </div>
-            <h1 id="login-title">Sign in to your account</h1>
-            <p class="muted">Capture, approve and route office documents securely.</p>
+            <h1 id="login-title">Welcome to LJT-RF</h1>
+            <p class="muted">Sign in to your account</p>
 
             <c:if test="${param.expired == '1'}"><div class="alert alert-warning">Your session expired. Please sign in again.</div></c:if>
             <c:if test="${param.logout == '1'}"><div class="alert alert-success">You have been signed out.</div></c:if>
@@ -48,15 +48,15 @@
                     <small>Demo records reset when Tomcat restarts.</small>
                 </details>
             </c:if>
-            <p class="login-foot">Forgot password? Contact the System Administrator.</p>
+            <p class="login-foot">Forgot password? Contact the System Administrator via email at helpdesk@hotmail.com</p>
         </section>
     </main>
     <aside class="login-info">
         <div>
             <h2>From hardcopy to the right department</h2>
             <article><span>1</span><div><strong>Capture and digitise</strong><p>Choose document images from your device or upload an existing PDF.</p></div></article>
-            <article><span>2</span><div><strong>Boss approval checkpoint</strong><p>Approve, reject or redirect before routing.</p></div></article>
-            <article><span>3</span><div><strong>Department repository</strong><p>IT, Finance and Management see only authorised records.</p></div></article>
+            <article><span>2</span><div><strong>Boss approval checkpoint</strong><p>Verify, Approve, reject before routing.</p></div></article>
+            <article><span>3</span><div><strong>Department repository</strong><p>Authorized access for Aunthorized User.</p></div></article>
         </div>
     </aside>
 </div>

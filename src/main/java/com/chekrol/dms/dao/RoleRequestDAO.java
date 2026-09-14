@@ -10,8 +10,13 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public class RoleRequestDAO {
+    private static final Set<String> ALLOWED_ROLES = Set.of(
+            "CLERK", "BOSS", "DEPARTMENT_USER"
+    );
     private static final String LIST_PENDING_SQL = """
             SELECT rr.request_id, rr.user_id, u.full_name,
                    rr.current_role_code, rr.requested_role_code,
@@ -43,21 +48,134 @@ public class RoleRequestDAO {
             long requestedBy,
             String remarks
     ) throws SQLException {
+        String normalizedCurrent = normalizeRole(currentRole);
+        String normalizedRequested = normalizeRole(requestedRole);
+
+        if (!ALLOWED_ROLES.contains(normalizedRequested)) {
+            throw new SQLException("Invalid requested role.");
+        }
+
         String sql = """
                 INSERT INTO dms_role_change_request(
                     user_id, current_role_code, requested_role_code,
                     requested_by, status, remarks
                 ) VALUES(?,?,?,?,'PENDING',?)
                 """;
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, userId);
-            statement.setString(2, currentRole);
-            statement.setString(3, requestedRole);
-            statement.setLong(4, requestedBy);
-            statement.setString(5, remarks);
-            statement.executeUpdate();
+
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            connection.setAutoCommit(false);
+            try {
+                validateRoleRequest(
+                        connection,
+                        userId,
+                        normalizedCurrent,
+                        normalizedRequested
+                );
+
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setLong(1, userId);
+                    statement.setString(2, normalizedCurrent);
+                    statement.setString(3, normalizedRequested);
+                    statement.setLong(4, requestedBy);
+                    statement.setString(5, remarks);
+                    statement.executeUpdate();
+                }
+
+                connection.commit();
+            } catch (SQLException exception) {
+                connection.rollback();
+                if (isUniqueConstraintViolation(exception)) {
+                    throw new SQLException(
+                            "A matching role request is already pending.",
+                            exception
+                    );
+                }
+                throw exception;
+            } finally {
+                connection.setAutoCommit(true);
+            }
         }
+    }
+
+    private void validateRoleRequest(
+            Connection connection,
+            long userId,
+            String currentRole,
+            String requestedRole
+    ) throws SQLException {
+        String userSql = """
+                SELECT status
+                FROM dms_user
+                WHERE user_id=?
+                """;
+        try (PreparedStatement statement = connection.prepareStatement(userSql)) {
+            statement.setLong(1, userId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    throw new SQLException("User not found.");
+                }
+                if (!"ACTIVE".equals(resultSet.getString("status"))) {
+                    throw new SQLException("Role changes require an active user.");
+                }
+            }
+        }
+
+        String requestedRoleSql = """
+                SELECT COUNT(*)
+                FROM dms_user_role ur
+                JOIN dms_role r ON r.role_id=ur.role_id
+                WHERE ur.user_id=? AND r.role_code=?
+                """;
+        try (PreparedStatement statement = connection.prepareStatement(requestedRoleSql)) {
+            statement.setLong(1, userId);
+            statement.setString(2, requestedRole);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    throw new SQLException(
+                            "The user already has the requested role."
+                    );
+                }
+            }
+        }
+
+        if (currentRole != null && !"SYSTEM_ADMIN".equals(currentRole)) {
+            String currentRoleSql = """
+                    SELECT COUNT(*)
+                    FROM dms_user_role ur
+                    JOIN dms_role r ON r.role_id=ur.role_id
+                    WHERE ur.user_id=? AND r.role_code=?
+                    """;
+            try (PreparedStatement statement = connection.prepareStatement(currentRoleSql)) {
+                statement.setLong(1, userId);
+                statement.setString(2, currentRole);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (!resultSet.next() || resultSet.getInt(1) == 0) {
+                        throw new SQLException(
+                                "The selected current role is no longer assigned."
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    private String normalizeRole(String role) {
+        if (role == null || role.isBlank()) {
+            return null;
+        }
+        return role.trim().toUpperCase(Locale.ROOT);
+    }
+
+    private boolean isUniqueConstraintViolation(SQLException exception) {
+        SQLException current = exception;
+        while (current != null) {
+            if (current.getErrorCode() == 1
+                    || "23000".equals(current.getSQLState())) {
+                return true;
+            }
+            current = current.getNextException();
+        }
+        return false;
     }
 
     public void decide(
@@ -115,7 +233,9 @@ public class RoleRequestDAO {
 
     private void applyRoleChange(Connection connection, PendingRoleChange roleChange)
             throws SQLException {
-        if (roleChange.currentRole() != null && !roleChange.currentRole().isBlank()) {
+        if (roleChange.currentRole() != null
+                && !roleChange.currentRole().isBlank()
+                && !"SYSTEM_ADMIN".equals(roleChange.currentRole())) {
             String deleteSql = """
                     DELETE FROM dms_user_role
                     WHERE user_id=?

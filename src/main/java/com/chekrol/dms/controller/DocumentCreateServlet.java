@@ -113,6 +113,7 @@ public class DocumentCreateServlet extends HttpServlet {
         try {
             User currentUser = getCurrentUser(request);
             DocumentRecord document = buildDocument(request);
+            document.setSubmissionKey(submittedToken);
 
             Collection<Part> allParts = request.getParts();
 

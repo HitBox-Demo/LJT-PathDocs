@@ -1,4 +1,4 @@
-const CACHE_NAME = "ljtrouteflow-static-v13";
+const CACHE_NAME = "ljtrouteflow-static-v14";
 const SCOPE = self.registration.scope;
 const STATIC_ASSETS = [
   "assets/css/app.css",
@@ -43,6 +43,7 @@ self.addEventListener("fetch", event => {
 
   if (url.origin !== self.location.origin) return;
   if (url.pathname.includes("/documents/download") ||
+      url.pathname.includes("/documents/thumbnail") ||
       url.pathname.includes("/documents/view") ||
       url.pathname.includes("/approvals/")) return;
 

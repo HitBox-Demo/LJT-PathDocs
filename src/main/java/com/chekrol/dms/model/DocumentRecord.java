@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public class DocumentRecord implements Serializable {
     private long id;
     private String documentCode;
+    private String submissionKey;
     private String title;
     private String referenceNo;
     private String sender;
@@ -34,6 +35,8 @@ public class DocumentRecord implements Serializable {
     public void setId(long id) { this.id = id; }
     public String getDocumentCode() { return documentCode; }
     public void setDocumentCode(String documentCode) { this.documentCode = documentCode; }
+    public String getSubmissionKey() { return submissionKey; }
+    public void setSubmissionKey(String submissionKey) { this.submissionKey = submissionKey; }
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
     public String getReferenceNo() { return referenceNo; }

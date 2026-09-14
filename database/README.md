@@ -1,19 +1,29 @@
-# Oracle Database Setup
+# Oracle XE 21c database scripts
 
-Use a dedicated application schema such as `DOC_ROUTE`. Do not run the web application as `SYS` or `SYSTEM`.
+Confirmed target:
 
-Run in order:
+- Oracle Database XE 21c
+- Host: `localhost`
+- Port: `1521`
+- Service/container: `XEPDB1`
+- Schema: `LJT_ROUTE_FLOW`
 
-1. `01_create_schema.sql`
-2. `02_seed_data.sql`
-3. `03_verify_schema.sql`
+The schema has already been installed when all scripts through
+`04_transaction_smoke_test.sql` completed successfully.
 
-Seed accounts:
+Fresh order:
 
-- `clerk / Clerk@123`
-- `boss / Boss@123`
-- `it.user / Dept@123`
-- `finance.user / Dept@123`
-- `management.user / Dept@123`
+```sql
+@database/00_preflight.sql
+@database/00_cleanup_partial.sql
+@database/01_create_schema.sql
+@database/02_seed_data.sql
+@database/03_verify_schema.sql
+@database/04_transaction_smoke_test.sql
+```
 
-Change all temporary passwords before a real deployment.
+Do not rerun `01_create_schema.sql` against an already-complete schema.
+`99_drop_schema.sql` permanently deletes all RouteFlow data.
+
+The `DMS_DOCUMENT.SUBMISSION_KEY` unique constraint is used by application
+version 1.3.0 for database-level duplicate-request protection.

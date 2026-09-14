@@ -86,7 +86,7 @@
 
             <a href="${ctx}/setup/database-test">
                 <span class="nav-icon" aria-hidden="true">9.</span>
-                <span>Database Test</span>
+                <span>Connection</span>
             </a>
         </c:if>
 
@@ -133,6 +133,6 @@
     </nav>
 
     <div class="sidebar-foot">
-        <small>LJT RouteFlow - JSP/Servlet PWA - v1.2</small>
+        <small>LJT RouteFlow - JSP/Servlet PWA - v1.3</small>
     </div>
 </aside>

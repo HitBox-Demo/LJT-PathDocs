@@ -398,6 +398,10 @@ public final class DemoData {
                 .filter(document -> switch (view == null ? "repository" : view) {
                     case "draft" -> "DRAFT".equals(document.getStatus()) && Objects.equals(document.getCreatedById(), user.getId());
                     case "pending" -> "PENDING_APPROVAL".equals(document.getStatus());
+                    case "overdue" -> "PENDING_APPROVAL".equals(document.getStatus())
+                            && document.getDueDate() != null
+                            && document.getDueDate().isBefore(LocalDate.now());
+                    case "routed" -> "ROUTED".equals(document.getStatus());
                     case "returned" -> "RETURNED_FOR_CORRECTION".equals(document.getStatus()) && Objects.equals(document.getCreatedById(), user.getId());
                     case "department" -> "ROUTED".equals(document.getStatus());
                     case "search", "repository" -> true;

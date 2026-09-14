@@ -38,6 +38,15 @@ public class DocumentService {
         document.setDocumentCode(generateDocumentCode());
         document.setDueDate(submit ? calculateDueDate(document.getPriority()) : null);
 
+        if (!AppConfig.isDemoMode()) {
+            Long existingDocumentId = documentDAO.findIdBySubmissionKey(
+                    document.getSubmissionKey()
+            );
+            if (existingDocumentId != null) {
+                return existingDocumentId;
+            }
+        }
+
         List<DocumentFile> files = new ArrayList<>();
         List<Path> storedPaths = new ArrayList<>();
         try {
@@ -53,7 +62,18 @@ public class DocumentService {
                 DemoData.createDocument(user, document, files, submit);
                 return document.getId();
             }
-            return documentDAO.create(document, files, submit);
+
+            DocumentDAO.CreateResult result = documentDAO.create(
+                    document,
+                    files,
+                    submit
+            );
+
+            if (!result.created()) {
+                deleteQuietly(storedPaths);
+            }
+
+            return result.documentId();
         } catch (IOException | SQLException | RuntimeException exception) {
             deleteQuietly(storedPaths);
             throw exception;

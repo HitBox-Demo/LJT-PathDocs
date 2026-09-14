@@ -72,10 +72,25 @@
     <section class="card form-section">
         <div class="card-header"><div><h2>2. Document Information</h2><p>Fields marked * are required.</p></div></div>
         <div class="field-grid">
-            <label class="field field-wide">Document Title *<input name="title" maxlength="250" required value="${fn:escapeXml(param.title)}" placeholder="Example: Procurement Request - Server Upgrade"></label>
-            <label class="field">Reference Number *<input name="referenceNo" maxlength="100" required value="${fn:escapeXml(param.referenceNo)}" placeholder="IT/PR/2026/001"></label>
-            <label class="field">Sender *<input name="sender" maxlength="200" required value="${fn:escapeXml(param.sender)}" placeholder="Department or organisation"></label>
-            <label class="field">Date Received *<input type="date" name="dateReceived" required value="${empty param.dateReceived ? '' : param.dateReceived}"></label>
+            <label class="field field-wide">Document Title *
+                <input  name="title" 
+                        maxlength="250" 
+                        required value="${fn:escapeXml(param.title)}" 
+                        placeholder="Example: Procurement Request - Server Upgrade"></label>
+            <label class="field">Reference Number *
+                <input  name="referenceNo" 
+                        maxlength="100" 
+                        required value="${fn:escapeXml(param.referenceNo)}" 
+                        placeholder="IT/PR/2026/001"></label>
+            <label class="field">Sender *
+                <input  name="sender" 
+                        maxlength="200" 
+                        required value="${fn:escapeXml(param.sender)}" 
+                        placeholder="Department or organisation"></label>
+            <label class="field">Date Received *
+                <input  type="date" 
+                        name="dateReceived" 
+                        required value="${empty param.dateReceived ? '' : param.dateReceived}"></label>
             <label class="field">Category *
                 <select name="category" required>
                     <option value="">Select category</option>
@@ -96,7 +111,11 @@
                 </select>
             </label>
             <label class="field field-wide">Description
-                <textarea name="description" rows="4" maxlength="1000" placeholder="Short summary or handling instruction"><c:out value="${param.description}"/></textarea>
+                <textarea   name="description" 
+                            rows="4" 
+                            maxlength="1000" 
+                            placeholder="Short summary or handling instruction">
+                <c:out value="${param.description}"/></textarea>
             </label>
         </div>
     </section>

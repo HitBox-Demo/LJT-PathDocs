@@ -24,7 +24,7 @@ import java.util.Set;
 
 public class DocumentDAO {
     private static final String SELECT_DOCUMENTS = """
-            SELECT doc.document_id, doc.document_code, doc.title,
+            SELECT doc.document_id, doc.document_code, doc.submission_key, doc.title,
                    doc.reference_no, doc.sender, doc.date_received,
                    doc.category, doc.priority, doc.description,
                    doc.destination_department_id, dept.department_name,
@@ -121,24 +121,54 @@ public class DocumentDAO {
         }
     }
 
-    public long create(
+    public Long findIdBySubmissionKey(String submissionKey) throws SQLException {
+        if (submissionKey == null || submissionKey.isBlank()) {
+            return null;
+        }
+
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            return findIdBySubmissionKey(connection, submissionKey);
+        }
+    }
+
+    public CreateResult create(
             DocumentRecord document,
             List<DocumentFile> files,
             boolean submit
     ) throws SQLException {
+        if (document.getSubmissionKey() == null
+                || document.getSubmissionKey().isBlank()) {
+            throw new SQLException("A submission key is required to create a document.");
+        }
+
         String insertDocumentSql = """
                 INSERT INTO dms_document(
-                    document_code, title, reference_no, sender, date_received,
-                    category, priority, confidential_flag, description,
+                    document_code, submission_key, title, reference_no,
+                    sender, date_received, category, priority,
+                    confidential_flag, description,
                     destination_department_id, boss_id, status, created_by,
                     submitted_at, due_date
-                ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                 """;
 
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
             try {
-                long documentId = insertDocument(connection, insertDocumentSql, document, submit);
+                Long existingDocumentId = findIdBySubmissionKey(
+                        connection,
+                        document.getSubmissionKey()
+                );
+                if (existingDocumentId != null) {
+                    connection.rollback();
+                    return new CreateResult(existingDocumentId, false);
+                }
+
+                long documentId = insertDocument(
+                        connection,
+                        insertDocumentSql,
+                        document,
+                        submit
+                );
                 for (DocumentFile file : files) {
                     insertFile(connection, documentId, file);
                 }
@@ -161,9 +191,20 @@ public class DocumentDAO {
                     );
                 }
                 connection.commit();
-                return documentId;
+                return new CreateResult(documentId, true);
             } catch (SQLException exception) {
                 connection.rollback();
+
+                if (isUniqueConstraintViolation(exception)) {
+                    Long existingDocumentId = findIdBySubmissionKey(
+                            connection,
+                            document.getSubmissionKey()
+                    );
+                    if (existingDocumentId != null) {
+                        return new CreateResult(existingDocumentId, false);
+                    }
+                }
+
                 throw exception;
             } finally {
                 connection.setAutoCommit(true);
@@ -339,13 +380,32 @@ public class DocumentDAO {
         if (user.hasRole("SYSTEM_ADMIN") || user.hasRole("CLERK")) {
             return;
         }
-        if (user.hasRole("BOSS")) {
+
+        boolean boss = user.hasRole("BOSS");
+        boolean departmentUser = user.hasRole("DEPARTMENT_USER")
+                && user.getDepartmentId() != null;
+
+        if (boss && departmentUser) {
+            sql.append(" AND (doc.boss_id=? OR "
+                    + "(doc.status='ROUTED' AND doc.destination_department_id=?))");
+            parameters.add(user.getId());
+            parameters.add(user.getDepartmentId());
+            return;
+        }
+
+        if (boss) {
             sql.append(" AND doc.boss_id=?");
             parameters.add(user.getId());
             return;
         }
-        sql.append(" AND doc.status='ROUTED' AND doc.destination_department_id=?");
-        parameters.add(user.getDepartmentId() == null ? -1L : user.getDepartmentId());
+
+        if (departmentUser) {
+            sql.append(" AND doc.status='ROUTED' AND doc.destination_department_id=?");
+            parameters.add(user.getDepartmentId());
+            return;
+        }
+
+        sql.append(" AND 1=0");
     }
 
     private void appendViewCondition(
@@ -360,6 +420,12 @@ public class DocumentDAO {
                 parameters.add(user.getId());
             }
             case "pending" -> sql.append(" AND doc.status='PENDING_APPROVAL'");
+            case "overdue" -> sql.append(
+                    " AND doc.status='PENDING_APPROVAL' "
+                            + "AND doc.due_date IS NOT NULL "
+                            + "AND doc.due_date < TRUNC(SYSDATE)"
+            );
+            case "routed" -> sql.append(" AND doc.status='ROUTED'");
             case "returned" -> {
                 sql.append(" AND doc.status='RETURNED_FOR_CORRECTION' AND doc.created_by=?");
                 parameters.add(user.getId());
@@ -410,6 +476,40 @@ public class DocumentDAO {
                     && "ROUTED".equals(status));
     }
 
+    private Long findIdBySubmissionKey(
+            Connection connection,
+            String submissionKey
+    ) throws SQLException {
+        if (submissionKey == null || submissionKey.isBlank()) {
+            return null;
+        }
+
+        String sql = """
+                SELECT document_id
+                FROM dms_document
+                WHERE submission_key=?
+                """;
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, submissionKey);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? resultSet.getLong(1) : null;
+            }
+        }
+    }
+
+    private boolean isUniqueConstraintViolation(SQLException exception) {
+        SQLException current = exception;
+        while (current != null) {
+            if (current.getErrorCode() == 1
+                    || "23000".equals(current.getSQLState())) {
+                return true;
+            }
+            current = current.getNextException();
+        }
+        return false;
+    }
+
     private long insertDocument(
             Connection connection,
             String sql,
@@ -422,6 +522,7 @@ public class DocumentDAO {
         )) {
             int index = 1;
             statement.setString(index++, document.getDocumentCode());
+            statement.setString(index++, document.getSubmissionKey());
             statement.setString(index++, document.getTitle());
             statement.setString(index++, document.getReferenceNo());
             statement.setString(index++, document.getSender());
@@ -668,6 +769,7 @@ public class DocumentDAO {
             DocumentRecord document = new DocumentRecord();
             document.setId(resultSet.getLong("document_id"));
             document.setDocumentCode(resultSet.getString("document_code"));
+            document.setSubmissionKey(resultSet.getString("submission_key"));
             document.setTitle(resultSet.getString("title"));
             document.setReferenceNo(resultSet.getString("reference_no"));
             document.setSender(resultSet.getString("sender"));
@@ -728,6 +830,9 @@ public class DocumentDAO {
         file.setFileSize(resultSet.getLong("file_size"));
         file.setPrimaryFile("Y".equals(resultSet.getString("primary_flag")));
         return file;
+    }
+
+    public record CreateResult(long documentId, boolean created) {
     }
 
     private record EditableState(String status, String rejectionReason) {
